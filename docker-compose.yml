@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always  
+    container_name: postgresintro
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${DEMO_DATABASE_PATH}:/demo-small-en-20170815.sql
+      - ${DATABASE_BACKUP}:/var/lib/postgresql/data
+

@@ -334,3 +334,7 @@ UPDATE students SET g_no = 'A-101';
 
 - end our transaction by typing `COMMIT;`
 
+- To end the session : `\q`
+
+___
+
