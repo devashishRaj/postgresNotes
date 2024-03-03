@@ -7,6 +7,9 @@
                  start-page="Intro-To-Postgres.md">
 
     <toc-element topic="Intro-To-Postgres.md">
+        <toc-element topic="Advance-Topics.md"/>
     </toc-element>
-    <toc-element topic="ADVANCE.md"/>
+    <toc-element topic="Clickhouse.md">
+        <toc-element topic="Key-Concepts.md"/>
+    </toc-element>
 </instance-profile>

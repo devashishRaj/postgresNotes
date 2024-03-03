@@ -14,4 +14,8 @@
         <description>Created after removal of "Tutorial" from Help Instance</description>
         <accepts>Tutorial.html</accepts>
     </rule>
+    <rule id="7ebf0b2c">
+        <description>Created after removal of "Advance topics" from Help Instance</description>
+        <accepts>ADVANCE.html</accepts>
+    </rule>
 </rules>

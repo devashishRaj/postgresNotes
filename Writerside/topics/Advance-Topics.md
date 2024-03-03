@@ -4,22 +4,22 @@ __TODO__ : add clear and small examples in relevance to complex queries.
 
 ## import demo database inside postgres container
 
-We are going to create a docker compose file to move the demo database into the image and 
+We are going to create a docker compose file to move the demo database into the image and
 then open it
 - download demo database from : [https://edu.postgrespro.com/demo-small-en.zip](https://edu.postgrespro.com/demo-small-en.zip)
-- go to terminal 
-  - `vim .env`
-    - paste the following and enter the valid paths:
-    ```text
-    DEMO_DATABASE_PATH="<path to demo file>/demo-small-en-20170815.sql"
-    DATABASE_BACKUP="<path to db backup"
-    #POSTGRES_DB="flight"
-    POSTGRES_USER="flight"
-    POSTGRES_PASSWORD="flight"
-    ```
-  
-  - `vim docker-compose.yml`
-    - paste the following
+- go to terminal
+    - `vim .env`
+        - paste the following and enter the valid paths:
+      ```text
+      DEMO_DATABASE_PATH="<path to demo file>/demo-small-en-20170815.sql"
+      DATABASE_BACKUP="<path to db backup"
+      #POSTGRES_DB="flight"
+      POSTGRES_USER="flight"
+      POSTGRES_PASSWORD="flight"
+      ```
+
+    - `vim docker-compose.yml`
+        - paste the following
   ```yaml
     version: '3'
     services:
@@ -36,15 +36,15 @@ then open it
       - ${DEMO_DATABASE_PATH}:/demo-small-en-20170815.sql
       - ${DATABASE_BACKUP}:/var/lib/postgresql/data
   ```
-  
-  - run : `docker composer up -d`
-    -  `docker exec -it postgresintro psql -d flight -U flight`
-    -  `\i demo-small-en-20170815.sql`
-    - db will automatically change to demo
 
-  - to change to database demo next time, 
-    - `docker exec -it postgresintro psql -d demo -U flight`
-    - OR : `\c demo` inside psql
+    - run : `docker composer up -d`
+        -  `docker exec -it postgresintro psql -d flight -U flight`
+        -  `\i demo-small-en-20170815.sql`
+        - db will automatically change to demo
+
+    - to change to database demo next time,
+        - `docker exec -it postgresintro psql -d demo -U flight`
+        - OR : `\c demo` inside psql
 
 ___
 
@@ -52,49 +52,49 @@ ___
 
 ### Schema
 - The demo database imported contains statistics on all the flights of an imaginary airline company of one month time-period
-- In postgres, schema is a named collection of database objects, including tables, views, functions, i.e, a collection 
-logical structures of data.
-- The main entity in our demo database's schema is a __booking__(mapped to bookings table). 
-  - Each booking includes several passengers with a __separate__ ticket issued for each passenger(tickets).
-    - we assume each passenger is unique , there is no unique-id issued for each passenger as a person
-  - Each ticket always contain one or more flight segments(ticker_flights).
-    - if there are no direct flights with departure to destination, and it's not round trip ticket then a ticket can 
-    have multiple flight segments included.
-      - it's assumed all tickets in a single booking has the same flight segment. Even though schema does not contain 
-      any such restrictions.
-  - Each flight('flight') goes from one airport('airports') to another .
-    - Flights with the same flight number have the same points of departure and destination but different departure
-      dates.
-  - At flight check-in, each passenger is issued a boarding pass (boarding_passes), where the seat number is specified.
-    - The flight/seat combination must be unique
+- In postgres, schema is a named collection of database objects, including tables, views, functions, i.e, a collection
+  logical structures of data.
+- The main entity in our demo database's schema is a __booking__(mapped to bookings table).
+    - Each booking includes several passengers with a __separate__ ticket issued for each passenger(tickets).
+        - we assume each passenger is unique , there is no unique-id issued for each passenger as a person
+    - Each ticket always contain one or more flight segments(ticker_flights).
+        - if there are no direct flights with departure to destination, and it's not round trip ticket then a ticket can
+          have multiple flight segments included.
+            - it's assumed all tickets in a single booking has the same flight segment. Even though schema does not contain
+              any such restrictions.
+    - Each flight('flight') goes from one airport('airports') to another .
+        - Flights with the same flight number have the same points of departure and destination but different departure
+          dates.
+    - At flight check-in, each passenger is issued a boarding pass (boarding_passes), where the seat number is specified.
+        - The flight/seat combination must be unique
 
 > you can use \d+ command to understand tables within terminal too.
->  \d+ bookings 
+>  \d+ bookings
 > \d+ aircrafts
 
 ### Bookings
-- To fly with our airline, passengers book the required tickets in advance (book_date, which must be within one month 
-before the flight). The booking is identified by its number (book_ref, a six-position combination of letters and digits).
+- To fly with our airline, passengers book the required tickets in advance (book_date, which must be within one month
+  before the flight). The booking is identified by its number (book_ref, a six-position combination of letters and digits).
 - The total_amount field stores the total price of all tickets included into the booking, for all passengers.
 
 ### Tickets
 
 - A ticket has a unique number (ticket_no), which consists of 13 digits.
-  - Ticker contains passenger_id, passenger_name and their contact_data
+    - Ticker contains passenger_id, passenger_name and their contact_data
 
 ### Flight Segments
 
-- A flight segment connects a ticket with a flight, identified by a number 
+- A flight segment connects a ticket with a flight, identified by a number
 - Each flight segment has its price (amount) and travel class(fare_conditions).
 
 ### Flights
 
 - natural composite key of the flights table consists of the flight number (flight_no) and the date of the departure
-(scheduled_departure). To make foreign keys that refer to this table a bit shorter, a surrogate key flight_id is used as
-the primary key.
+  (scheduled_departure). To make foreign keys that refer to this table a bit shorter, a surrogate key flight_id is used as
+  the primary key.
 
 - A flight always connects two points: departure_airport and arrival_airport.
-  - There's no entity like "connecting flight" , in such cases . Ticket contains all flight segments.
+    - There's no entity like "connecting flight" , in such cases . Ticket contains all flight segments.
 - Each flight has time of scheduled_departure and scheduled_arrival, actual_departure and actual_arrival times may differ.
 
 #### Flight status
@@ -108,8 +108,8 @@ the primary key.
 ### Airports
 
 - identified by a three-letter airport_code and has an airport_name.
-- a city name is simply an airport attribute, which is required to identify all the airports of the same city. 
-  - The table also includes coordinates (longitude and latitude) and the timezone.
+- a city name is simply an airport attribute, which is required to identify all the airports of the same city.
+    - The table also includes coordinates (longitude and latitude) and the timezone.
 ### Boarding Passes
 - the boarding pass is identified by the combination of ticket and flight numbers.
 - Boarding pass numbers (boarding_no) are assigned sequentially and has seat number (seat_no).
@@ -132,7 +132,7 @@ __NOTE__: View is a query stored in postgres database server.
 ### The “now” Function
 - The demo database contains a snapshot of data
 - The snapshot time is saved in the `bookings.now` function.
-  -  use this function in demo queries for cases that would typically require calling the `now` function.
+    -  use this function in demo queries for cases that would typically require calling the `now` function.
     - the return value of this function determines the version of the demo database: `SELECT bookings.now();`
 
 #### Simple Queries
@@ -158,7 +158,7 @@ AND f.scheduled_departure::date =
     bookings.now()::date - INTERVAL '2 day'
 AND bp.seat_no = '1A';
 ```
-__NOTE__: '::' is used to data from one type to another : 
+__NOTE__: '::' is used to data from one type to another :
 
 
 > Problem: How many seats remained free on flight PG0404 yesterday?
@@ -221,7 +221,7 @@ GROUP BY f.flight_no,
 in first for all their flights. Take into account only those
 passengers who took at least two flights.
 
-> Solution : boarding pass numbers are issued in the check-in order. 
+> Solution : boarding pass numbers are issued in the check-in order.
 ```SQL
 SELECT  t.passenger_name,
         t.ticket_no
@@ -277,10 +277,10 @@ WINDOW w AS ( PARTITION BY tf.ticket_no
 #### Arrays
 > Problem. Find the round-trip tickets in which the outbound route differs from the inbound one.
 > A round-trip ticket where the outbound route differs from the inbound route is typically referred to as a "multi-city"
-> or "multi-destination" ticket. With this type of ticket, travelers can fly from one location to another 
+> or "multi-destination" ticket. With this type of ticket, travelers can fly from one location to another
 > (the outbound route), and then return from a different location (the inbound route).
 
-> Solution: 
+> Solution:
 ```SQL
 SELECT  r1.departure_airport,
         r1.arrival_airport,
@@ -349,8 +349,8 @@ WHERE p.last_arrival = p.destination;
 ```
 
 > Problem. What is the maximum number of connections that can be required to get from any airport to any other airport?
-> Solution: We can take the previous query as the basis for the solution. However, the first iteration must now contain 
-> all the possible airport pairs, not just a single pair: each airport must be connected to all the other airports. 
+> Solution: We can take the previous query as the basis for the solution. However, the first iteration must now contain
+> all the possible airport pairs, not just a single pair: each airport must be connected to all the other airports.
 > For all these pairs of airports we first find the shortest path, and then select the longest of them.
 
 ```SQL
